@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Technikraum – Server Chaos</title>
+<link rel="stylesheet" href="style-server.css"/>
+</head>
+<body>
+<h1>Technikraum – Server Chaos</h1>
+
+<div id="server-list">
+  <div class="server-column" id="column-1">
+    <h2>Rack 1</h2>
+  </div>
+  <div class="server-column" id="column-2">
+    <h2>Rack 2</h2>
+  </div>
+  <div class="server-column" id="column-3">
+    <h2>Rack 3</h2>
+  </div>
+</div>
+
+<button id="restart-all">Alle Server neu starten</button>
+<div id="message">Klicke auf einen Server, um ihn zu starten oder zu reparieren.</div>
+
+<script>
+const columns = [
+  document.getElementById('column-1'),
+  document.getElementById('column-2'),
+  document.getElementById('column-3')
+];
+
+const messageEl = document.getElementById('message');
+const restartAllBtn = document.getElementById('restart-all');
+
+// Alle 24 Server mit Gerätenamen
+const servers = [
+  { id: 1, name: "Alpha", device: "Kaffeemaschine", status: "ok" },
+  { id: 2, name: "Beta", device: "Mikrowelle", status: "ok" },
+  { id: 3, name: "Gamma", device: "WLAN-Router", status: "ok" },
+  { id: 4, name: "Delta", device: "Drucker", status: "ok" },
+  { id: 5, name: "Epsilon", device: "Scanner", status: "ok" },
+  { id: 6, name: "Zeta", device: "Faxgerät", status: "ok" },
+  { id: 7, name: "Eta", device: "Lichtsteuerung", status: "ok" },
+  { id: 8, name: "Theta", device: "Kühlschrank", status: "ok" },
+  { id: 9, name: "Iota", device: "Türsteuerung", status: "ok" },
+  { id: 10, name: "Kappa", device: "Sicherheitskamera", status: "ok" },
+  { id: 11, name: "Lambda", device: "TV im Pausenraum", status: "ok" },
+  { id: 12, name: "Mu", device: "Radioanlage", status: "ok" },
+  { id: 13, name: "Nu", device: "Zeiterfassung", status: "ok" },
+  { id: 14, name: "Xi", device: "Ventilator", status: "ok" },
+  { id: 15, name: "Omikron", device: "Beamer", status: "ok" },
+  { id: 16, name: "Pi", device: "Klimaanlage", status: "ok" },
+  { id: 17, name: "Rho", device: "Aktenvernichter", status: "ok" },
+  { id: 18, name: "Sigma", device: "Laserdrucker", status: "ok" },
+  { id: 19, name: "Tau", device: "Bluetooth-Hub", status: "ok" },
+  { id: 20, name: "Upsilon", device: "Thermokanne", status: "ok" },
+  { id: 21, name: "Phi", device: "Projektor", status: "ok" },
+  { id: 22, name: "Chi", device: "Konferenzmikrofon", status: "ok" },
+  { id: 23, name: "Psi", device: "Serverlüftung", status: "ok" },
+  { id: 24, name: "Omega", device: "Zugangskontrolle", status: "ok" }
+];
+
+function randomError() {
+  const healthy = servers.filter(s => s.status === "ok");
+  if (healthy.length === 0) return;
+  const rand = healthy[Math.floor(Math.random() * healthy.length)];
+  rand.status = "error";
+}
+
+randomError();
+
+function renderServers() {
+  columns.forEach(col => col.innerHTML = ""); // Spalten leeren
+
+  servers.forEach((server, i) => {
+    const targetColumn = columns[i % 3];
+
+    const serverDiv = document.createElement('div');
+    serverDiv.className = 'server';
+    serverDiv.style.cursor = 'pointer'; // Zeigt an, dass es klickbar ist
+
+    // LED-Gruppe (3 Lichter)
+    const ledGroup = document.createElement('div');
+    ledGroup.classList.add('led-group');
+
+    for (let j = 0; j < 3; j++) {
+      const led = document.createElement('div');
+      led.classList.add('led');
+
+      switch (server.status) {
+        case "booting":
+          led.classList.add('led-orange');
+          led.style.animation = "blink-sync 1s infinite";
+          break;
+        case "ok":
+          const color = Math.random() > 0.5 ? 'led-green' : 'led-red';
+          led.classList.add(color);
+          led.style.animation = `blink-async ${Math.random() * 1 + 0.5}s infinite`;
+          break;
+        case "error":
+          led.classList.add('led-red', 'led-on');
+          break;
+        case "maintenance":
+          led.classList.add('led-red');
+          led.style.animation = "blink-sync 1s infinite";
+          break;
+        case "off":
+        default:
+          led.classList.add('led-gray');
+          break;
+      }
+
+      ledGroup.appendChild(led);
+    }
+
+    // Name ohne "Server"
+    const nameWithoutPrefix = server.name.replace(/^Server\s+/i, '');
+
+    const title = document.createElement('h3');
+    title.textContent = nameWithoutPrefix;
+
+    serverDiv.appendChild(ledGroup);
+    serverDiv.appendChild(title);
+
+    // Klick auf gesamten Server-Block
+    serverDiv.addEventListener('click', () => {
+      handleServerClick(server.id);
+    });
+
+    targetColumn.appendChild(serverDiv);
+  });
+}
+
+function handleServerClick(id) {
+  const server = servers.find(s => s.id === id);
+
+  // Wenn er "error" ist → reparieren
+  if (server.status === "error") {
+    server.status = "maintenance";
+    renderServers();
+    setMessage(`🔧 Repariere ${server.name}...`);
+    setTimeout(() => {
+      const isError = Math.random() < 0.25;
+      server.status = isError ? "error" : "ok";
+      renderServers();
+      const msg = isError
+        ? `⚠️ Reparatur fehlgeschlagen bei ${server.name}`
+        : `✅ ${server.name} wieder betriebsbereit`;
+      setMessage(msg);
+    }, 1500);
+    return;
+  }
+
+  // Wenn er "off" ist → starten
+  if (server.status === "off") {
+    server.status = "booting";
+    renderServers();
+    setMessage(`🚀 Starte ${server.name}...`);
+    setTimeout(() => {
+      const isError = Math.random() < 0.25;
+      server.status = isError ? "error" : "ok";
+      renderServers();
+      const msg = isError
+        ? `💥 Fehler beim Start von ${server.name}`
+        : `✅ ${server.device} wieder verbunden`;
+      setMessage(msg);
+    }, 1500);
+    return;
+  }
+
+  // Wenn er "ok" ist → prüfen ob Ausschalten erlaubt
+  const hasErrors = servers.some(s => s.status === "error");
+  if (!hasErrors) {
+    server.status = "off";
+    renderServers();
+    setMessage(`❌ Verbindung zu ${server.device} verloren`);
+  } else {
+    setMessage(`🚫 Kann ${server.name} nicht ausschalten, solange Fehler bestehen.`);
+  }
+}
+
+function setMessage(text) {
+  messageEl.textContent = text;
+}
+
+restartAllBtn.addEventListener('click', () => {
+  setMessage("⏳ Server werden nacheinander heruntergefahren...");
+
+  const shuffledShutdown = [...servers];
+  for (let i = shuffledShutdown.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledShutdown[i], shuffledShutdown[j]] = [shuffledShutdown[j], shuffledShutdown[i]];
+  }
+
+  // Herunterfahren in zufälliger Reihenfolge
+  shuffledShutdown.forEach((server, index) => {
+    setTimeout(() => {
+      server.status = "off";
+      renderServers();
+      setMessage(`⛔ ${server.name} heruntergefahren`);
+    }, index * 50); // alle 300ms ein neuer Server
+  });
+
+  const totalShutdownTime = shuffledShutdown.length * 60;
+
+  // Nach Herunterfahren 5 Sekunden warten, dann Neustart
+  setTimeout(() => {
+    setMessage("🕒 Warte 5 Sekunden vor Neustart...");
+    
+    setTimeout(() => {
+      // Jetzt zufälliger Reboot
+      const shuffledReboot = [...servers];
+      for (let i = shuffledReboot.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledReboot[i], shuffledReboot[j]] = [shuffledReboot[j], shuffledReboot[i]];
+      }
+
+      let errorCount = 0;
+
+      shuffledReboot.forEach((server, index) => {
+        setTimeout(() => {
+          server.status = "booting";
+          renderServers();
+          setMessage(`🔄 Starte ${server.name}...`);
+        }, index * 500);
+
+        setTimeout(() => {
+          const shouldError = Math.random() < 0.3 && errorCount < 5;
+          if (shouldError) {
+            server.status = "error";
+            errorCount++;
+            setMessage(`💥 Fehler beim Start von ${server.name}`);
+          } else {
+            server.status = "ok";
+            setMessage(`✅ ${server.device} verbunden`);
+          }
+          renderServers();
+        }, index * 500 + 700);
+      });
+
+    }, 5000); // 5 Sekunden Wartezeit
+  }, totalShutdownTime);
+});
+
+renderServers();
+</script>
+</body>
+</html>

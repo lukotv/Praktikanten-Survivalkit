@@ -36,6 +36,9 @@
         <a href="fake-todo.html">🖥️ Großraumbüro (Fake-To-Do)</a>
         <a href="unabsendbar.html">📄 HR-Büro (Unabsendbares Formular)</a>
         <a href="kaffeemaschine.html">☕ Teeküche (Kaffeemaschine)</a>
+		<a href="impressum.html">🧾 Rechtsabteilung (Impressum)</a>
+		<a href="datenschutz.html">🔐 Überwachungsraum (Datenschutz)</a>
+
       </nav>
     </div>
   </div>
@@ -131,7 +134,34 @@
   setTimeout(() => {
     clearInterval(interval);
     document.getElementById("loading-screen").style.display = "none";
-  }, 5000);
+  }, 10000);
 </script>
 
+  <script>
+    const effects = [
+      'hover-glitchy',
+      'hover-rainbow',
+      'hover-typewriter',
+      'hover-tilt',
+      'hover-hacked'
+    ];
+
+    const navLinks = document.querySelectorAll('.navigation a');
+
+    navLinks.forEach(link => {
+      link.addEventListener('mouseenter', () => {
+        // Alle Hover-Effekt-Klassen entfernen
+        effects.forEach(cls => link.classList.remove(cls));
+
+        // Zufällige Klasse hinzufügen
+        const random = effects[Math.floor(Math.random() * effects.length)];
+        link.classList.add(random);
+      });
+
+      // Effekt wieder entfernen bei mouseleave (optional, damit’s neu ist)
+      link.addEventListener('mouseleave', () => {
+        effects.forEach(cls => link.classList.remove(cls));
+      });
+    });
+</script>
 </html>

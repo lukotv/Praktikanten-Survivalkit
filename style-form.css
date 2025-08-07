@@ -1,0 +1,82 @@
+    body {
+background-image: url("https://hroffice.eu/wp-content/uploads/2019/05/hroffice-1024x678-1024x678.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: auto;
+  font-family: 'Courier New', monospace;
+  padding: 20px;
+}
+
+	
+	.form-container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #fff;
+      border: 2px solid #000;
+      box-shadow: 4px 4px 0 #888;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+      padding: 5px;
+      font-family: inherit;
+      border: 1px solid #999;
+    }
+
+    #submit-btn {
+      padding: 10px;
+      background: #dcdcdc;
+      border: 2px solid #888;
+      box-shadow: 2px 2px 0 #aaa;
+      cursor: pointer;
+      position: relative;
+    }
+
+    #submit-btn:hover {
+      background: #e0e0e0;
+    }
+
+    #cookie-checkbox {
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .message-box {
+      background: #ffdddd;
+      padding: 10px;
+      border: 1px solid #f55;
+      display: none;
+      margin-top: 10px;
+    }
+
+    #clippy {
+      position: center;
+      display: none;
+      width: 500px;
+    }
+	
+	@keyframes shake {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(10deg); }
+  50% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes explode {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(3); opacity: 0; }
+}
+

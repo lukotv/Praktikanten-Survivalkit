@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>HR-Büro – Unabsendbares Formular</title>
+  <link rel="stylesheet" href="style-form.css" />
+
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>📄 HR-Büro – Mitarbeiterfeedback</h2>
+    <p>Deine Meinung interessiert uns – aber absenden darfst du sie nicht. 😈</p>
+
+    <form id="hr-form">
+      <label for="name">Name:</label>
+      <input type="text" id="name" placeholder="Max Mustermann" required>
+
+      <label for="bewertung">Bewertung:</label>
+      <select id="bewertung">
+        <option>⭐⭐⭐⭐⭐ – Beste Abteilung</option>
+        <option>⭐⭐⭐ – Mittelmäßig</option>
+        <option>★ – Ich bin nur hier wegen der Pflicht</option>
+      </select>
+
+      <label for="kommentar">Kommentar:</label>
+      <textarea id="kommentar" rows="4" placeholder="Schreib was Nettes… oder auch nicht." required></textarea>
+
+      <label>
+        <input type="checkbox" id="cookie-checkbox"/>
+        Ich akzeptiere Cookies 🍪
+      </label>
+
+      <button id="submit-btn">Formular absenden</button>
+
+      <div class="message-box" id="message-box"></div>
+      <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExajBjMXpoNzkxaWhndTJ3ZzJ1c3lxeDRwZjNqcmR4d3YwbTN4aTczbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/13V60VgE2ED7oc/giphy.gif" id="clippy" alt="Clippy">
+    </form>
+  </div>
+
+<script>
+  const submitBtn = document.getElementById("submit-btn");
+  const form = document.getElementById("hr-form");
+  const cookieCheckbox = document.getElementById("cookie-checkbox");
+  const messageBox = document.getElementById("message-box");
+  const clippy = document.getElementById("clippy");
+
+  const nameField = document.getElementById("name");
+  const bewertungField = document.getElementById("bewertung");
+  const kommentarField = document.getElementById("kommentar");
+
+  // Initial Button-Position
+const buttonStartX = window.innerWidth / 2 + 75; // 75 = Hälfte Buttonbreite
+const buttonStartY = window.innerHeight / 2 + 24; // 20 = Hälfte Buttonhöhe
+
+submitBtn.style.position = "absolute";
+submitBtn.style.left = `${buttonStartX}px`;
+submitBtn.style.top = `${buttonStartY}px`;
+submitBtn.style.transform = "translate(0, 0)";
+
+  let movementActive = false;
+
+  function checkFormFilled() {
+    return (
+      nameField.value.trim() !== "" &&
+      bewertungField.value.trim() !== "" &&
+      kommentarField.value.trim() !== ""
+    );
+  }
+
+const margin = 40; // Abstand zum Fenster-Rand
+const avoidRadius = 120;
+
+document.addEventListener("mousemove", (e) => {
+  if (!movementActive || !checkFormFilled()) return;
+
+  const btnRect = submitBtn.getBoundingClientRect();
+  const cursorX = e.clientX;
+  const cursorY = e.clientY;
+  const btnX = btnRect.left + btnRect.width / 2;
+  const btnY = btnRect.top + btnRect.height / 2;
+
+  const dx = btnX - cursorX;
+  const dy = btnY - cursorY;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+
+  if (distance < avoidRadius) {
+    const moveX = (dx / distance) * 8;
+    const moveY = (dy / distance) * 8;
+
+    let newLeft = btnRect.left + moveX;
+    let newTop = btnRect.top + moveY;
+
+    // Grenzen einhalten
+    newLeft = Math.max(margin, Math.min(window.innerWidth - btnRect.width - margin, newLeft));
+    newTop = Math.max(margin, Math.min(window.innerHeight - btnRect.height - margin, newTop));
+
+    submitBtn.style.left = `${newLeft}px`;
+    submitBtn.style.top = `${newTop}px`;
+  }
+});
+
+  // Aktivierung nach Eingabe
+  [nameField, bewertungField, kommentarField].forEach(el => {
+    el.addEventListener("input", () => {
+      movementActive = checkFormFilled();
+    });
+  });
+
+  // Button Click bleibt lustig
+  const messages = [
+    "Fehler 418: Ich bin eine Teekanne.",
+    "Formular verloren. Bitte reichen Sie es in Papierform ein.",
+    "Serverfehler: Praktikant hat Kabel gezogen.",
+    "Dein Kommentar wurde an Clippy weitergeleitet.",
+    "Kekse sind alle. Versuch's morgen nochmal.",
+    "Formular wurde erfolgreich ignoriert.",
+    "System: Emotionale Überlastung erkannt.",
+    "Formular in die Ablage P verschoben."
+  ];
+
+  const buttonBehaviors = [
+    () => showMessage(getRandom(messages)),
+    () => {
+      clippy.style.display = "block";
+      showMessage("Clippy meint: Du brauchst Hilfe?");
+      setTimeout(() => clippy.style.display = "none", 3000);
+    },
+    () => showMessage("Du hast erfolgreich NICHTS abgeschickt."),
+  ];
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const behavior = getRandom(buttonBehaviors);
+    behavior();
+  });
+  
+  
+
+  // Cookie Chaos
+  cookieCheckbox.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const reactions = [
+      () => {
+        cookieCheckbox.parentElement.style.transform = `rotate(${Math.random() * 360}deg)`;
+        alert("Diese Cookies sind leider verbrannt.");
+      },
+      () => {
+        cookieCheckbox.parentElement.style.animation = "shake 0.3s";
+        setTimeout(() => cookieCheckbox.parentElement.style.animation = "", 300);
+        showMessage("Das Cookie-Monster sagt nein.");
+      },
+      () => {
+        cookieCheckbox.style.display = "none";
+        showMessage("Cookie verloren. Bitte nicht nochmal versuchen.");
+      },
+      () => {
+        alert("⚠️ Sicherheitswarnung: Diese Cookies sind radioaktiv.");
+      },
+      () => {
+        cookieCheckbox.parentElement.style.animation = "explode 0.5s forwards";
+        showMessage("Boom. Keine Cookies für dich.");
+        setTimeout(() => {
+          cookieCheckbox.parentElement.style.visibility = "hidden";
+        }, 500);
+      }
+    ];
+
+    const reaction = reactions[Math.floor(Math.random() * reactions.length)];
+    reaction();
+  });
+
+  function showMessage(text) {
+    messageBox.style.display = "block";
+    messageBox.textContent = text;
+  }
+
+  function getRandom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+  
+  form.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  // 5% Chance auf Rücksprung
+  if (Math.random() < 0.05) {
+    window.location.href = "index.html"; // oder dein Empfangsraum-Link
+    return;
+  }
+
+  const behavior = getRandom(buttonBehaviors);
+  behavior();
+});
+
+</script>
+</body>
+</html>

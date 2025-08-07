@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Glitchy Navigation</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      background: #111;
+      color: #fff;
+      padding: 40px;
+    }
+
+    .nav-link {
+      display: block;
+      width: 300px;
+      margin: 15px 0;
+      padding: 15px;
+      background: #222;
+      border: 2px dashed #888;
+      text-decoration: none;
+      color: lime;
+      text-shadow: 0 0 2px lime;
+      font-weight: bold;
+      font-size: 1.2em;
+      transition: all 0.2s ease;
+    }
+
+    /* -------- GLITCHY / WILD EFFECTS -------- */
+
+    .hover-glitchy:hover {
+      animation: glitchy 0.3s infinite;
+      color: red;
+      text-shadow: 2px 2px 0 cyan, -2px -2px 0 magenta;
+      background: repeating-linear-gradient(
+        45deg,
+        #222,
+        #222 10px,
+        #444 10px,
+        #444 20px
+      );
+      transform: scale(1.05) rotateZ(-2deg);
+    }
+
+    @keyframes glitchy {
+      0% { transform: translate(0, 0) skew(0); }
+      20% { transform: translate(-2px, 1px) skew(-2deg); }
+      40% { transform: translate(2px, -1px) skew(2deg); }
+      60% { transform: translate(-1px, 1px) skew(1deg); }
+      80% { transform: translate(1px, -2px) skew(-1deg); }
+      100% { transform: translate(0, 0) skew(0); }
+    }
+
+    .hover-rainbow:hover {
+      background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+      color: black;
+      font-size: 1.5em;
+      transform: rotateX(10deg) scale(1.1);
+    }
+
+    .hover-typewriter:hover {
+      font-family: monospace;
+      color: #0f0;
+      background: #000;
+      border: 1px solid #0f0;
+      letter-spacing: 0.2em;
+      animation: blink 0.8s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .hover-tilt:hover {
+      transform: rotateZ(8deg) scale(1.1);
+      background: #ff00ff;
+      color: #00ffff;
+      box-shadow: 0 0 15px #ff00ff;
+    }
+
+    .hover-hacked:hover {
+      background: black;
+      color: #00ff00;
+      font-family: 'Courier New', monospace;
+      text-shadow: 0 0 4px #00ff00;
+      transform: scale(1.05) skewX(10deg);
+    }
+  </style>
+</head>
+<body>
+
+  <a href="#" class="nav-link">📂 Raum A – Projekte</a>
+  <a href="#" class="nav-link">🗃️ Raum B – Akten</a>
+  <a href="#" class="nav-link">📉 Raum C – Budget</a>
+  <a href="#" class="nav-link">🔐 Überwachungsraum (Datenschutz)</a>
+  <a href="#" class="nav-link">🧾 Rechtsabteilung (Impressum)</a>
+
+  <script>
+    const effects = [
+      'hover-glitchy',
+      'hover-rainbow',
+      'hover-typewriter',
+      'hover-tilt',
+      'hover-hacked'
+    ];
+
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    navLinks.forEach(link => {
+      link.addEventListener('mouseenter', () => {
+        // Alle Hover-Effekt-Klassen entfernen
+        effects.forEach(cls => link.classList.remove(cls));
+
+        // Zufällige Klasse hinzufügen
+        const random = effects[Math.floor(Math.random() * effects.length)];
+        link.classList.add(random);
+      });
+
+      // Effekt wieder entfernen bei mouseleave (optional, damit’s neu ist)
+      link.addEventListener('mouseleave', () => {
+        effects.forEach(cls => link.classList.remove(cls));
+      });
+    });
+  </script>
+
+</body>
+</html>

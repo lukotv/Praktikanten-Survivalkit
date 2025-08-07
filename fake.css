@@ -179,3 +179,38 @@ animation: glitchy 0.3s infinite;
   from { opacity: 1; }
   to { opacity: 0.5; }
 }
+#todo-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+#todo-input {
+  flex: 1;
+  padding: 8px;
+  font-family: inherit;
+}
+
+#todo-list {
+  list-style: none;
+  padding: 0;
+}
+
+#todo-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f0f0f0;
+  border: 1px solid #aaa;
+  margin-bottom: 8px;
+  padding: 8px;
+}
+
+#todo-list li.completed {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+#todo-list button {
+  margin-left: 10px;
+}

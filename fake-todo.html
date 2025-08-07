@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Großraumbüro – Aufgabenliste</title>
+  <link rel="stylesheet" href="fake.css" />
+</head>
+<body>
+  <div class="window">
+    <div class="title-bar">🖥️ Großraumbüro – Aufgabenliste</div>
+    <div class="window-body">
+      <h1>So tun, als ob man arbeitet™️</h1>
+      <form id="todo-form">
+        <input type="text" id="todo-input" placeholder="Neue sinnlose Aufgabe..." required />
+        <button type="submit">Hinzufügen</button>
+      </form>
+
+      <ul id="todo-list"></ul>
+
+      <button id="add-random">🎲 Zufällige Aufgabe generieren</button>
+      <br><br>
+      <a href="index.html">🔙 Zurück zum Empfang</a>
+    </div>
+  </div>
+
+  <script src="todo.js"></script>
+</body>
+<script>
+const todoForm = document.getElementById("todo-form");
+const todoInput = document.getElementById("todo-input");
+const todoList = document.getElementById("todo-list");
+const randomBtn = document.getElementById("add-random");
+
+const fakeTasks = [
+"PowerPoint öffnen und schnell wieder schließen",
+  "Einen wichtigen Ordner kopieren – in denselben Ordner",
+  "So tun, als würde man telefonieren 📞",
+  "Mit dem Bürostuhl um die eigene Achse drehen",
+  "Meeting über das nächste Meeting planen",
+  "Den Drucker anstarren, bis er reagiert",
+  "Excel starten, nichts tun, schließen",
+  "Virtuelle Kaffeemaschine warten",
+  "Kaffeemaschine anrufen (vergeblich)",
+  "Das Datum auf dem Monitor überprüfen",
+  "Feierabend rückwärts zählen",
+  "Die Büroklammern alphabetisch sortieren",
+  "Den E-Mail-Posteingang über Wochen unberührt lassen",
+  "Den Kaffee kalt werden lassen und dann darüber jammern",
+  "Den Monitor putzen, während Zoom läuft",
+  "Dokumente mit Comic Sans formatieren",
+  "Wichtige Dateien umbenennen in 'Endgültig_final_V2_2'",
+  "Einen Stift aufspitzen – ohne ihn zu benutzen",
+  "Der Pflanze am Fenster einen Namen geben",
+  "Den Kollegen den Drucker-Namen erklären",
+  "Sich mit dem Kopierer anfreunden",
+  "Geheime Meetings im Pausenraum abhören",
+  "Eine Excel-Tabelle nur mit bunten Zellen füllen",
+  "Den Kalender mit Urlaubstagen blockieren – für später",
+  "Den PC neu starten, um Probleme zu simulieren",
+  "Sich über die Raumtemperatur beschweren",
+  "Die Maus vertauschen und beobachten, wie lange es dauert",
+  "Virtuelle Meetings in Meme-Sprache antworten",
+  "Den Bildschirmhintergrund wechseln und so tun, als wäre man produktiv",
+  "Wichtig klingende Phrasen googeln und zitieren"];
+
+// Lade Tasks aus LocalStorage oder leer
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+function saveTasks() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function renderTasks() {
+  todoList.innerHTML = "";
+  tasks.forEach((task, index) => {
+    const li = document.createElement("li");
+    li.className = task.done ? "completed" : "";
+
+    const span = document.createElement("span");
+    span.textContent = task.text;
+    span.addEventListener("click", () => toggleTask(index));
+
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "🗑️";
+    delBtn.addEventListener("click", () => deleteTask(index));
+
+    li.appendChild(span);
+    li.appendChild(delBtn);
+    todoList.appendChild(li);
+  });
+}
+
+function addTask(text) {
+  tasks.push({ text, done: false });
+  saveTasks();
+  renderTasks();
+}
+
+function deleteTask(index) {
+  tasks.splice(index, 1);
+  saveTasks();
+  renderTasks();
+}
+
+function toggleTask(index) {
+  tasks[index].done = !tasks[index].done;
+  saveTasks();
+  renderTasks();
+}
+
+// Neue Aufgabe hinzufügen (Formular)
+todoForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const text = todoInput.value.trim();
+  if (text !== "") {
+    addTask(text);
+    todoInput.value = "";
+  }
+});
+
+// Hier: 10 Aufgaben auf einmal generieren
+randomBtn.addEventListener("click", () => {
+  for (let i = 0; i < 10; i++) {
+    const random = fakeTasks[Math.floor(Math.random() * fakeTasks.length)];
+    tasks.push({ text: random, done: false }); // direkt zum Array hinzufügen
+  }
+  saveTasks();
+  renderTasks();
+});
+
+// Erste Anzeige der Tasks
+renderTasks();
+</script>
+</html>
