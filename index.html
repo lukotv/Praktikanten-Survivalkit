@@ -27,6 +27,10 @@
       <div class="timer-box">
         ⏰ <strong>Feierabend in:</strong> <span id="countdown">--:--:--</span>
       </div>
+	  
+	  <div class="timer-box-mittag">
+        ⏰ <strong>Mittagspause in:</strong> <span id="mittagspause-countdown">--:--:--</span>
+      </div>
 
       <nav class="navigation">
         <a href="fake-todo.html">🖥️ Großraumbüro (Fake-To-Do)</a>
@@ -54,6 +58,33 @@
       const seconds = Math.floor((diff / 1000) % 60);
 
       document.getElementById("countdown").textContent =
+        `${hours.toString().padStart(2, '0')}:` +
+        `${minutes.toString().padStart(2, '0')}:` +
+        `${seconds.toString().padStart(2, '0')}`;
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+  
+  <script>
+    // Timer bis Mittagspause (z.B. 16:30 Uhr)
+    function updateCountdown() {
+      const now = new Date();
+      const mittagspause = new Date();
+      mittagspause.setHours(12, 00, 0, 0); // 16:30 Uhr
+
+      if (now > mittagspause) {
+        document.getElementById("mittagspause-countdown").textContent = "Mittagspause vorbei!";
+        return;
+      }
+
+      const diff = mittagspause - now;
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      document.getElementById("mittagspause-countdown").textContent =
         `${hours.toString().padStart(2, '0')}:` +
         `${minutes.toString().padStart(2, '0')}:` +
         `${seconds.toString().padStart(2, '0')}`;

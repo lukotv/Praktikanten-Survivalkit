@@ -39,6 +39,14 @@ h1 {
   font-size: 1.2rem;
 }
 
+.timer-box-mittag {
+  background: #f4f4f4;
+  border: 1px solid #999;
+  padding: 10px;
+  margin: 20px 0;
+  font-size: 1.2rem;
+}
+
 .navigation {
   display: flex;
   flex-direction: column;
