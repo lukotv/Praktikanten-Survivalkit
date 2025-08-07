@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Praktikanten Survival Kit – Empfang</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<!-- Lade-Sound und GIF -->
+<div id="loading-screen">
+  <div class="loading-box">
+    <div class="loading-title">📠 Büro wird vorbereitet…</div>
+    <img src="assets/loading-buerogif.gif" alt="Lade-GIF" class="loading-gif" />
+    <div id="loading-text">Lade irgendwas Wichtiges...</div>
+    <audio id="bootSound" src="assets/boot-sound.mp3" preload="auto"></audio>
+  </div>
+</div>
+  <div class="window">
+    <div class="title-bar">
+      <span>📠 Empfang – Praktikanten Survival Kit</span>
+    </div>
+    <div class="window-body">
+      <h1>Willkommen im Survival-Kit-Büro 🗂️</h1>
+      <p>Hier findest du alles, was du brauchst, um deinen Praktikumstag zu überleben.</p>
+
+      <div class="timer-box">
+        ⏰ <strong>Feierabend in:</strong> <span id="countdown">--:--:--</span>
+      </div>
+
+      <nav class="navigation">
+        <a href="fake-todo.html">🖥️ Großraumbüro (Fake-To-Do)</a>
+        <a href="unabsendbar.html">📄 HR-Büro (Unabsendbares Formular)</a>
+        <a href="kaffeemaschine.html">☕ Teeküche (Kaffeemaschine)</a>
+      </nav>
+    </div>
+  </div>
+
+  <script>
+    // Timer bis Feierabend (z.B. 16:30 Uhr)
+    function updateCountdown() {
+      const now = new Date();
+      const feierabend = new Date();
+      feierabend.setHours(17, 00, 0, 0); // 16:30 Uhr
+
+      if (now > feierabend) {
+        document.getElementById("countdown").textContent = "Schon Feierabend!";
+        return;
+      }
+
+      const diff = feierabend - now;
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      document.getElementById("countdown").textContent =
+        `${hours.toString().padStart(2, '0')}:` +
+        `${minutes.toString().padStart(2, '0')}:` +
+        `${seconds.toString().padStart(2, '0')}`;
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+</body>
+<script>
+  const loadingMessages = [
+    "Kaffeeflecken von Tastatur entfernen…",
+    "Virtuelle Kaffeemaschine vorheizen…",
+    "Excel startet im Tarnmodus…",
+    "Kabel entwirren…",
+    "Mausmatte justieren…",
+    "WLAN am Drucker konfigurieren…",
+    "Clippy wird ausgegraben…",
+    "Windows 95 Treiber aktualisieren…",
+    "Meeting über das nächste Meeting planen…",
+    "Kekse aus der Firewall extrahieren…",
+    "Praktikantenrechte initialisieren…",
+    "Daten aus dem Papierkorb rekonstruieren…"
+  ];
+
+  let textEl = document.getElementById("loading-text");
+  let audio = document.getElementById("bootSound");
+
+  // Wechsle alle 900ms die Ladezeile
+  const interval = setInterval(() => {
+    const msg = loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
+    textEl.textContent = msg;
+  }, 900);
+
+  // Starte Sound beim Laden
+  window.addEventListener("DOMContentLoaded", () => {
+    audio.play().catch(() => {
+      // Fallback, falls autoplay blockiert ist
+      console.warn("Sound konnte nicht automatisch gestartet werden.");
+    });
+  });
+
+  // Entferne den Ladescreen nach 3 Sekunden
+  setTimeout(() => {
+    clearInterval(interval);
+    document.getElementById("loading-screen").style.display = "none";
+  }, 5000);
+</script>
+
+</html>
