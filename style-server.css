@@ -142,13 +142,41 @@ body {
   50% { opacity: 1; }
 }
 
+/* Error: schnelles, abruptes rotes Blinken */
+@keyframes blink-error {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* Maintenance: Lauflicht-Effekt (orange LEDs nacheinander) */
+@keyframes blink-maintenance {
+  0%, 19% { opacity: 1; }
+  20%, 100% { opacity: 0; }
+}
+
+
 /* Dauerhaft aktiv */
 .led-on {
   opacity: 1;
 }
 
 /* Farben */
-.led-green { background-color: limegreen; }
-.led-red { background-color: red; }
-.led-orange { background-color: orange; }
-.led-gray { background-color: gray; }
+.led-green {
+  background-color: #00ff00; /* richtig sattes Grün */
+  box-shadow: 0 0 8px #00ff00;
+}
+
+.led-red {
+  background-color: #ff0000; /* kräftiges Rot */
+  box-shadow: 0 0 8px #ff0000;
+}
+
+.led-orange {
+  background-color: #ffa500; /* Orange für booting */
+  box-shadow: 0 0 8px #ffa500;
+}
+
+.led-gray {
+  background-color: #555;
+  box-shadow: none;
+}

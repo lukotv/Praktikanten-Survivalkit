@@ -35,7 +35,7 @@
       <nav class="navigation">
         <a href="fake-todo.html">🖥️ Großraumbüro (Fake-To-Do)</a>
         <a href="unabsendbar.html">📄 HR-Büro (Unabsendbares Formular)</a>
-        <a href="kaffeemaschine.html">☕ Teeküche (Kaffeemaschine)</a>
+        <a href="kaffeemaschine.html">🖧 Serverraum (Serverfehler)</a>
 		<a href="impressum.html">🧾 Rechtsabteilung (Impressum)</a>
 		<a href="datenschutz.html">🔐 Überwachungsraum (Datenschutz)</a>
 
@@ -45,29 +45,63 @@
 
   <script>
     // Timer bis Feierabend (z.B. 16:30 Uhr)
-    function updateCountdown() {
-      const now = new Date();
-      const feierabend = new Date();
-      feierabend.setHours(17, 00, 0, 0); // 16:30 Uhr
+    // Konfigurierbare Feierabendzeiten (einfach anpassen)
+const normalFeierabendHour = 17; // Mo-Do & sonstige Tage: 17:00
+const normalFeierabendMin = 0;
+const fridayFeierabendHour = 12; // Freitag: 14:00
+const fridayFeierabendMin = 0;
 
-      if (now > feierabend) {
-        document.getElementById("countdown").textContent = "Schon Feierabend!";
-        return;
-      }
+// Element-Handle (prüft, ob vorhanden)
+const countdownEl = document.getElementById("countdown");
+if (!countdownEl) {
+  console.warn('Element mit id="countdown" nicht gefunden. Bitte HTML prüfen.');
+}
 
-      const diff = feierabend - now;
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
+// Liefert das Feierabend-Datum für "heute" unter Berücksichtigung Freitag
+function getFeierabendForToday(now) {
+  const feierabend = new Date(now); // kopie von jetzt
+  const day = now.getDay(); // 0 = So, 1 = Mo, ..., 5 = Fr, 6 = Sa
 
-      document.getElementById("countdown").textContent =
-        `${hours.toString().padStart(2, '0')}:` +
-        `${minutes.toString().padStart(2, '0')}:` +
-        `${seconds.toString().padStart(2, '0')}`;
+  if (day === 5) { // Freitag
+    feierabend.setHours(fridayFeierabendHour, fridayFeierabendMin, 0, 0);
+  } else {
+    feierabend.setHours(normalFeierabendHour, normalFeierabendMin, 0, 0);
+  }
+
+  return feierabend;
+}
+
+function updateCountdown() {
+  const now = new Date();
+  const feierabend = getFeierabendForToday(now);
+
+  // Falls Wochenende (Sa oder So) oder schon nach Feierabend → Anzeige
+  if (now >= feierabend) {
+    if (now.getDay() === 0 || now.getDay() === 6) {
+      // Wochenende
+      countdownEl && (countdownEl.textContent = "🎉 Wochenende!");
+    } else {
+      countdownEl && (countdownEl.textContent = "🎉 Schon Feierabend!");
     }
+    return;
+  }
 
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
+  const diff = feierabend - now;
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor((diff / (1000 * 60)) % 60);
+  const seconds = Math.floor((diff / 1000) % 60);
+
+  const text = `${String(hours).padStart(2, '0')}:` +
+               `${String(minutes).padStart(2, '0')}:` +
+               `${String(seconds).padStart(2, '0')}`;
+
+  countdownEl && (countdownEl.textContent = text);
+}
+
+// Start und Interval
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
   </script>
   
   <script>

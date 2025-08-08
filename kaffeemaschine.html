@@ -34,7 +34,6 @@ const columns = [
 const messageEl = document.getElementById('message');
 const restartAllBtn = document.getElementById('restart-all');
 
-// Alle 24 Server mit Gerätenamen
 const servers = [
   { id: 1, name: "Alpha", device: "Kaffeemaschine", status: "ok" },
   { id: 2, name: "Beta", device: "Mikrowelle", status: "ok" },
@@ -62,119 +61,149 @@ const servers = [
   { id: 24, name: "Omega", device: "Zugangskontrolle", status: "ok" }
 ];
 
+const serverDivs = new Map();
+const serverIntervals = new Map();
+
 function randomError() {
   const healthy = servers.filter(s => s.status === "ok");
   if (healthy.length === 0) return;
   const rand = healthy[Math.floor(Math.random() * healthy.length)];
   rand.status = "error";
 }
-
 randomError();
 
-function renderServers() {
-  columns.forEach(col => col.innerHTML = ""); // Spalten leeren
+function initServers() {
+  columns.forEach(col => col.innerHTML = "");
 
   servers.forEach((server, i) => {
     const targetColumn = columns[i % 3];
 
     const serverDiv = document.createElement('div');
     serverDiv.className = 'server';
-    serverDiv.style.cursor = 'pointer'; // Zeigt an, dass es klickbar ist
+    serverDiv.style.cursor = 'pointer';
+    serverDiv.setAttribute('data-id', server.id);
 
-    // LED-Gruppe (3 Lichter)
+    const title = document.createElement('h3');
+    title.textContent = server.name;
+
     const ledGroup = document.createElement('div');
     ledGroup.classList.add('led-group');
 
-    for (let j = 0; j < 3; j++) {
+    for (let j = 0; j < 12; j++) {
       const led = document.createElement('div');
       led.classList.add('led');
-
-      switch (server.status) {
-        case "booting":
-          led.classList.add('led-orange');
-          led.style.animation = "blink-sync 1s infinite";
-          break;
-        case "ok":
-          const color = Math.random() > 0.5 ? 'led-green' : 'led-red';
-          led.classList.add(color);
-          led.style.animation = `blink-async ${Math.random() * 1 + 0.5}s infinite`;
-          break;
-        case "error":
-          led.classList.add('led-red', 'led-on');
-          break;
-        case "maintenance":
-          led.classList.add('led-red');
-          led.style.animation = "blink-sync 1s infinite";
-          break;
-        case "off":
-        default:
-          led.classList.add('led-gray');
-          break;
-      }
-
       ledGroup.appendChild(led);
     }
 
-    // Name ohne "Server"
-    const nameWithoutPrefix = server.name.replace(/^Server\s+/i, '');
-
-    const title = document.createElement('h3');
-    title.textContent = nameWithoutPrefix;
-
-    serverDiv.appendChild(ledGroup);
     serverDiv.appendChild(title);
+    serverDiv.appendChild(ledGroup);
 
-    // Klick auf gesamten Server-Block
     serverDiv.addEventListener('click', () => {
       handleServerClick(server.id);
     });
 
     targetColumn.appendChild(serverDiv);
+    serverDivs.set(server.id, serverDiv);
   });
+}
+
+// LEDs aktualisieren, Intervall managen
+function clearServerIntervals(serverId) {
+  if (!serverIntervals.has(serverId)) return;
+  serverIntervals.get(serverId).forEach(id => clearInterval(id));
+  serverIntervals.delete(serverId);
+}
+
+function updateServerStatus(server) {
+  const serverDiv = serverDivs.get(server.id);
+  if (!serverDiv) return;
+
+  const ledGroup = serverDiv.querySelector('.led-group');
+  const leds = ledGroup.children;
+
+  clearServerIntervals(server.id);
+
+  for (let j = 0; j < leds.length; j++) {
+    const led = leds[j];
+    led.className = 'led';
+    led.style.animation = '';
+
+    switch (server.status) {
+      case "booting":
+        led.classList.add('led-orange');
+        led.style.animation = "blink-sync 1s infinite";
+        break;
+
+      case "ok":
+        const color = Math.random() > 0.5 ? 'led-green' : 'led-red';
+        led.classList.add(color, 'led-on');
+
+        const intervalId = setInterval(() => {
+          const srv = servers.find(s => s.id === server.id);
+          if (!srv || srv.status !== "ok") {
+            clearInterval(intervalId);
+            return;
+          }
+          const newColor = Math.random() > 0.5 ? 'led-green' : 'led-red';
+          led.className = 'led ' + newColor + ' led-on';
+        }, Math.random() * 200 + 50);
+
+        if (!serverIntervals.has(server.id)) serverIntervals.set(server.id, []);
+        serverIntervals.get(server.id).push(intervalId);
+        break;
+
+      case "error":
+        led.classList.add('led-red');
+        led.style.animation = "blink-error 0.5s infinite steps(1)";
+        break;
+
+      case "maintenance":
+        led.classList.add('led-orange');
+        led.style.animation = `blink-error 0.5s infinite steps(1)`;
+        led.style.animationDelay = `${j * 0.5}s`;
+        break;
+
+      case "off":
+      default:
+        led.classList.add('led-gray');
+        break;
+    }
+  }
 }
 
 function handleServerClick(id) {
   const server = servers.find(s => s.id === id);
 
-  // Wenn er "error" ist → reparieren
   if (server.status === "error") {
     server.status = "maintenance";
-    renderServers();
+    updateServerStatus(server);
     setMessage(`🔧 Repariere ${server.name}...`);
     setTimeout(() => {
       const isError = Math.random() < 0.25;
       server.status = isError ? "error" : "ok";
-      renderServers();
-      const msg = isError
-        ? `⚠️ Reparatur fehlgeschlagen bei ${server.name}`
-        : `✅ ${server.name} wieder betriebsbereit`;
-      setMessage(msg);
-    }, 1500);
+      updateServerStatus(server);
+      setMessage(isError ? `⚠️ Reparatur fehlgeschlagen bei ${server.name}` : `✅ ${server.name} wieder betriebsbereit`);
+    }, 6000);
     return;
   }
 
-  // Wenn er "off" ist → starten
   if (server.status === "off") {
     server.status = "booting";
-    renderServers();
+    updateServerStatus(server);
     setMessage(`🚀 Starte ${server.name}...`);
     setTimeout(() => {
       const isError = Math.random() < 0.25;
       server.status = isError ? "error" : "ok";
-      renderServers();
-      const msg = isError
-        ? `💥 Fehler beim Start von ${server.name}`
-        : `✅ ${server.device} wieder verbunden`;
-      setMessage(msg);
-    }, 1500);
+      updateServerStatus(server);
+      setMessage(isError ? `💥 Fehler beim Start von ${server.name}` : `✅ ${server.device} wieder verbunden`);
+    }, 3000);
     return;
   }
 
-  // Wenn er "ok" ist → prüfen ob Ausschalten erlaubt
   const hasErrors = servers.some(s => s.status === "error");
   if (!hasErrors) {
     server.status = "off";
-    renderServers();
+    updateServerStatus(server);
     setMessage(`❌ Verbindung zu ${server.device} verloren`);
   } else {
     setMessage(`🚫 Kann ${server.name} nicht ausschalten, solange Fehler bestehen.`);
@@ -189,40 +218,31 @@ restartAllBtn.addEventListener('click', () => {
   setMessage("⏳ Server werden nacheinander heruntergefahren...");
 
   const shuffledShutdown = [...servers];
-  for (let i = shuffledShutdown.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffledShutdown[i], shuffledShutdown[j]] = [shuffledShutdown[j], shuffledShutdown[i]];
-  }
+  shuffleArray(shuffledShutdown);
 
-  // Herunterfahren in zufälliger Reihenfolge
   shuffledShutdown.forEach((server, index) => {
     setTimeout(() => {
       server.status = "off";
-      renderServers();
+      updateServerStatus(server);
       setMessage(`⛔ ${server.name} heruntergefahren`);
-    }, index * 50); // alle 300ms ein neuer Server
+    }, index * 100);
   });
 
   const totalShutdownTime = shuffledShutdown.length * 60;
 
-  // Nach Herunterfahren 5 Sekunden warten, dann Neustart
   setTimeout(() => {
     setMessage("🕒 Warte 5 Sekunden vor Neustart...");
-    
+
     setTimeout(() => {
-      // Jetzt zufälliger Reboot
       const shuffledReboot = [...servers];
-      for (let i = shuffledReboot.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffledReboot[i], shuffledReboot[j]] = [shuffledReboot[j], shuffledReboot[i]];
-      }
+      shuffleArray(shuffledReboot);
 
       let errorCount = 0;
 
       shuffledReboot.forEach((server, index) => {
         setTimeout(() => {
           server.status = "booting";
-          renderServers();
+          updateServerStatus(server);
           setMessage(`🔄 Starte ${server.name}...`);
         }, index * 500);
 
@@ -236,15 +256,23 @@ restartAllBtn.addEventListener('click', () => {
             server.status = "ok";
             setMessage(`✅ ${server.device} verbunden`);
           }
-          renderServers();
+          updateServerStatus(server);
         }, index * 500 + 700);
       });
-
-    }, 5000); // 5 Sekunden Wartezeit
+    }, 5000);
   }, totalShutdownTime);
 });
 
-renderServers();
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+initServers();
+servers.forEach(updateServerStatus);
+
 </script>
 </body>
 </html>
