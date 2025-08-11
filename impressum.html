@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Rechtsabteilung – Impressum</title>
+<style>
+  :root{
+    --panel-bg: rgba(255,255,255,0.88);
+    --accent: #0b6623; /* dunkles grün */
+    --muted: #444;
+    --glass-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  }
+  html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
+  body.impressum{
+    /* Lokales Bild (empfohlen): lege assets/scales-law-office-bg.jpg an */
+    background: center/cover no-repeat fixed url('assets/scales-law-office-bg.jpg');
+    /* Alternativ entferne Kommentar und setze eine externe URL:
+       background: center/cover no-repeat fixed url('https://images.openai.com/thumbnails/url/rA_K...jpg');
+    */
+    color:#111;
+  }
+
+  /* leichter dunkler Overlay um Text besser lesbar zu machen */
+  body.impressum::before{
+    content:"";
+    position:fixed;inset:0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.45));
+    pointer-events:none;
+  }
+
+  /* Hauptpanel */
+  .impressum-wrap{
+    position:relative;
+    max-width:1100px;
+    margin:6vh auto;
+    background:var(--panel-bg);
+    border-radius:12px;
+    box-shadow:var(--glass-shadow);
+    padding:28px;
+    display:grid;
+    grid-template-columns: 1fr 360px;
+    gap:20px;
+    align-items:start;
+    transform: translateZ(0);
+  }
+
+  /* Typewriter header */
+  .title {
+    margin:0 0 12px 0;
+    font-size:clamp(1.25rem,2.6vw,2rem);
+    letter-spacing:0.6px;
+    display:flex;align-items:center;gap:14px;
+  }
+  .title .typing {
+    font-weight:700;color:var(--accent);
+    white-space:nowrap;
+    overflow:hidden;
+    border-right:2px solid rgba(0,0,0,0.12);
+    padding-right:6px;
+  }
+
+  /* left column content */
+  .content {
+    font-size:0.98rem;
+    color:var(--muted);
+    line-height:1.5;
+  }
+  .meta {
+    background:#f7f7f7;padding:12px;border-radius:8px;margin-bottom:14px;border:1px solid #eee;
+  }
+  .meta b{color:#000}
+
+  /* accordion */
+  .accordion {margin-top:8px;}
+  .acc-item {border-top:1px dashed rgba(0,0,0,0.06);padding:12px 0;}
+  .acc-head {display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;}
+  .acc-head h4{margin:0;font-size:1rem;color:#222}
+  .acc-body {max-height:0;overflow:hidden;transition:max-height 300ms ease,opacity 300ms;opacity:0;margin-top:8px}
+  .acc-body.open {opacity:1;padding-top:6px}
+
+  /* right column*/
+  .side {
+    position:relative;
+    display:flex;flex-direction:column;gap:14px;
+  }
+
+  /* small cards */
+  .card {background:#fff;border-radius:8px;padding:12px;border:1px solid #eee;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+  .call-to-action {background:linear-gradient(90deg,#f0fff0,#e8fff5);border:1px solid #dff4e6}
+
+  /* SVG Waage */
+  .scale-wrap {display:flex;justify-content:center;align-items:center;padding:8px 0}
+  svg.scale {width:220px;height:140px;display:block}
+
+  /* floating stamps */
+  .stamp {
+    position:absolute;
+    width:96px;height:96px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;color:#fff;
+    transform:translate3d(0,0,0);
+    box-shadow:0 8px 20px rgba(0,0,0,0.35);
+    user-select:none;
+    pointer-events:none;
+    opacity:0.95;
+  }
+  .stamp.stamp-1{background:#c0392b; left:10px; top:-36px; transform:rotate(-12deg);}
+  .stamp.stamp-2{background:#2980b9; right:10px; top:-30px; transform:rotate(8deg);}
+  .stamp.stamp-3{background:#f39c12; left:40%; top:-48px; transform:rotate(-6deg);}
+
+  /* responsive */
+  @media (max-width:980px){
+    .impressum-wrap{grid-template-columns:1fr; padding:18px; margin:4vh 12px;}
+    .stamp {display:none}
+    svg.scale{width:160px;height:120px}
+  }
+
+  /* LED-like legal badges inside */
+  .small-line {display:flex;gap:8px;align-items:center}
+  .badge {
+    display:inline-flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;background:#0b6623;color:#fff;font-size:0.9rem;
+  }
+
+  /* subtle hover on accordion */
+  .acc-head:hover {opacity:0.95}
+
+  /* helper for animated reveal */
+  .fade-in {opacity:0; transform:translateY(6px); transition:all .45s ease}
+  .fade-in.show {opacity:1; transform:none}
+</style>
+</head>
+<body class="impressum">
+  <div class="impressum-wrap" id="panel">
+    <!-- floating stamps -->
+    <div class="stamp stamp-1">LEGAL</div>
+    <div class="stamp stamp-2">VERTRAG</div>
+    <div class="stamp stamp-3">IMPR</div>
+
+    <!-- LEFT: main content -->
+    <div>
+      <h1 class="title">
+        <span class="typing" id="typewriter">Rechtsabteilung — Impressum</span>
+      </h1>
+
+      <div class="content">
+        <div class="meta">
+          <p><b>Bezeichnung:</b> Praktikanten Survival Kit – Beispiel GmbH</p>
+          <p><b>Adresse:</b> Musterstraße 123, 9900 Lienz, Österreich</p>
+          <p><b>Vertretungsberechtigter:</b> Luis Kollnig</p>
+          <p><b>Kontakt:</b> <a href="mailto:luis.kollnig@tirol.gv.at">luis.kollnig@tirol.gv.at</a> | Tel: +43 680 154 889 8</p>
+        </div>
+
+        <div class="accordion" id="accordion">
+          <div class="acc-item">
+            <div class="acc-head" data-acc="1"><h4>Impressum & Verantwortlicher</h4><div>+</div></div>
+            <div class="acc-body" id="acc-1">
+              <p>Dies ist ein fiktives Impressum für Demo-Zwecke. Verantwortlich gemäß §5 ECG: Luis Kollnig.</p>
+              <p>Weitere rechtliche Hinweise und Kontaktdaten findest du hier.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <div class="acc-head" data-acc="2"><h4>Haftungsausschluss & Inhalte</h4><div>+</div></div>
+            <div class="acc-body" id="acc-2">
+              <p>Die Inhalte wurden mit größtmöglicher Sorgfalt erstellt; eine Haftung für Aktualität, Vollständigkeit oder Fehler wird nicht übernommen.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <div class="acc-head" data-acc="3"><h4>Urheberrecht</h4><div>+</div></div>
+            <div class="acc-body" id="acc-3">
+              <p>Texte, Bilder und Grafiken unterliegen dem Copyright. Verwendung nur mit schriftlicher Genehmigung.</p>
+            </div>
+          </div>
+
+          <div class="acc-item">
+            <div class="acc-head" data-acc="4"><h4>Datenschutz (kurz)</h4><div>+</div></div>
+            <div class="acc-body" id="acc-4">
+              <p>Persönliche Daten werden nur gemäß unserer Datenschutzerklärung verarbeitet. Für Details besuche die Datenschutzerklärungsseite.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: side column -->
+    <aside class="side">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:.9rem;color:#666">Firma</div>
+            <div style="font-weight:700">Beispiel GmbH</div>
+          </div>
+          <div class="badge">OFFIZIELL</div>
+        </div>
+        <hr style="border:none;border-top:1px dashed #eee;margin:10px 0">
+        <div style="font-size:.9rem;color:#666">Firmenbuch & Ust-ID</div>
+        <div style="font-weight:600">FN 123456a · ATU12345678</div>
+      </div>
+
+      <div class="card call-to-action">
+        <div style="display:flex;gap:12px;align-items:center">
+          <!-- Simple scale SVG that we animate with JS -->
+          <div class="scale-wrap">
+            <svg class="scale" viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
+              <g id="scale-base" transform="translate(110,20)">
+                <rect x="-60" y="70" width="120" height="6" rx="3" fill="#333" opacity="0.8"/>
+                <line x1="0" y1="6" x2="0" y2="72" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+                <g id="beam" transform="rotate(0)">
+                  <line x1="-80" y1="10" x2="80" y2="10" stroke="#222" stroke-width="4" stroke-linecap="round"/>
+                  <!-- left pan -->
+                  <g id="left-pan" transform="translate(-50,28)">
+                    <ellipse cx="0" cy="26" rx="26" ry="10" fill="#bfbfbf" opacity="0.95"/>
+                    <line x1="0" y1="-6" x2="0" y2="10" stroke="#222" stroke-width="2"/>
+                  </g>
+                  <!-- right pan -->
+                  <g id="right-pan" transform="translate(50,28)">
+                    <ellipse cx="0" cy="26" rx="26" ry="10" fill="#bfbfbf" opacity="0.95"/>
+                    <line x1="0" y1="-6" x2="0" y2="10" stroke="#222" stroke-width="2"/>
+                  </g>
+                </g>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <p style="margin-top:8px;font-size:.95rem;color:#333">Waage der Gerechtigkeit — klicke die Waage an, um eine zufällige Balance-Simulation auszulösen.</p>
+        <button id="btn-balance" style="margin-top:8px;padding:8px 12px;border-radius:8px;border:1px solid #d0d0d0;background:#fff;cursor:pointer">Waage animieren</button>
+      </div>
+
+      <div class="card">
+        <div style="font-size:.95rem;color:#333;font-weight:600">Schnellzugriffe</div>
+        <ul style="margin:8px 0 0 12px;padding:0;color:#555">
+          <li><a href="mailto:luis.kollnig@tirol.gv.at">Kontakt per Mail</a></li>
+          <li><a href="datenschutz.html">Vollständige Datenschutzerklärung</a></li>
+          <li><a href="impressum.html">Diese Seite als PDF speichern</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+<script>
+/* ---------------------------
+  Typewriter Title
+----------------------------*/
+(function(){
+  const el = document.getElementById('typewriter');
+  const full = 'Rechtsabteilung — Impressum';
+  let i=0;
+  el.textContent = '';
+  function step(){
+    if(i <= full.length){
+      el.textContent = full.slice(0,i);
+      i++;
+      setTimeout(step, 40 + Math.random()*40);
+    } else {
+      // blink cursor illusion
+      setInterval(()=>{ el.style.borderRight = el.style.borderRight ? '' : '2px solid rgba(0,0,0,0.12)'; }, 600);
+    }
+  }
+  step();
+})();
+
+/* ---------------------------
+  Accordion
+----------------------------*/
+document.querySelectorAll('.acc-head').forEach(head=>{
+  head.addEventListener('click', ()=>{
+    const id = head.dataset.acc;
+    const body = document.getElementById('acc-' + id);
+    const isOpen = body.classList.contains('open');
+    // close all
+    document.querySelectorAll('.acc-body').forEach(b=>{ b.classList.remove('open'); b.style.maxHeight = null; });
+    if(!isOpen){
+      body.classList.add('open');
+      body.style.maxHeight = body.scrollHeight + 'px';
+    }
+  });
+});
+
+/* ---------------------------
+  Parallax Background (subtle)
+----------------------------*/
+(function(){
+  const root = document.body;
+  window.addEventListener('mousemove', (e) => {
+    const rx = (e.clientX / window.innerWidth - 0.5) * 8; // small shift
+    const ry = (e.clientY / window.innerHeight - 0.5) * 8;
+    root.style.backgroundPosition = `calc(50% + ${-rx}px) calc(50% + ${-ry}px)`;
+  });
+})();
+
+/* ---------------------------
+  Waage Animation (SVG)
+----------------------------*/
+(function(){
+  const btn = document.getElementById('btn-balance');
+  const beam = document.querySelector('#beam');
+  const leftPan = document.querySelector('#left-pan');
+  const rightPan = document.querySelector('#right-pan');
+
+  // helper rotate beam and tilt pans
+  function setTilt(deg){
+    beam.setAttribute('transform', `rotate(${deg})`);
+    leftPan.setAttribute('transform', `translate(-50,${28 + Math.sin(deg*Math.PI/180)*8})`);
+    rightPan.setAttribute('transform', `translate(50,${28 - Math.sin(deg*Math.PI/180)*8})`);
+  }
+
+  // random balance animation sequence
+  btn.addEventListener('click', ()=>{
+    // simple sequence: swing left -> right -> settle
+    const seq = [ -18, 14, -8, 6, -3, 0 ]; // degrees
+    let idx = 0;
+    btn.disabled = true;
+    const timer = setInterval(()=>{
+      setTilt(seq[idx]);
+      idx++;
+      if(idx >= seq.length){
+        clearInterval(timer);
+        btn.disabled = false;
+      }
+    }, 350);
+  });
+
+  // small auto-balance on load for flair
+  setTimeout(()=>{ btn.click(); }, 800);
+})();
+
+/* ---------------------------
+  Floating stamp gentle animation
+----------------------------*/
+(function(){
+  document.querySelectorAll('.stamp').forEach((s, i) => {
+    const amp = 8 + i*3;
+    const dur = 3000 + i*800;
+    let t=0;
+    function anim(){
+      const y = Math.sin(t / dur * Math.PI * 2) * amp;
+      s.style.transform = `translateY(${y}px) rotate(${ (i-1)*6 }deg)`;
+      t += 60;
+      requestAnimationFrame(anim);
+    }
+    anim();
+  });
+})();
+
+/* ---------------------------
+  Show initial accordion (small delay)
+----------------------------*/
+setTimeout(()=> {
+  const first = document.getElementById('acc-1');
+  first.classList.add('open'); first.style.maxHeight = first.scrollHeight + 'px';
+}, 600);
+
+/* ---------------------------
+  Small reveal for panel
+----------------------------*/
+setTimeout(()=> {
+  document.querySelectorAll('.fade-in').forEach(el => el.classList.add('show'));
+}, 200);
+</script>
+</body>
+</html>

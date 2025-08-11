@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Überwachungsraum – Datenschutzerklärung</title>
+<style>
+  body {
+    margin: 0;
+    background: black;
+    font-family: "Courier New", monospace;
+    color: #00ff88;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,255,0,0.08) 0px,
+      rgba(0,255,0,0.08) 2px,
+      transparent 2px,
+      transparent 4px
+    );
+    pointer-events: none;
+    z-index: 10;
+  }
+  .terminal {
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+    background: rgba(0,0,0,0.85);
+    border: 2px solid #00ff88;
+    box-shadow: 0 0 20px #00ff88;
+    position: relative;
+    overflow: hidden;
+  }
+  .title {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 2px solid #00ff88;
+  }
+  .code {
+    background: rgba(0, 20, 0, 0.8);
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    height: 400px;
+    overflow-y: auto;
+    box-shadow: inset 0 0 10px #00ff88;
+  }
+  .lights {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .light {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #004422;
+    box-shadow: 0 0 5px #004422;
+  }
+  .light.active-green {
+    background: #00ff00;
+    box-shadow: 0 0 10px #00ff00;
+  }
+  .light.active-red {
+    background: #ff0000;
+    box-shadow: 0 0 10px #ff0000;
+  }
+  .alert {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: rgba(255,0,0,0.8);
+    color: white;
+    padding: 5px 10px;
+    font-weight: bold;
+    border: 1px solid #ff0000;
+    box-shadow: 0 0 10px #ff0000;
+    animation: blink 0.3s infinite alternate;
+    display: none;
+  }
+  @keyframes blink {
+    from { opacity: 1; }
+    to { opacity: 0.4; }
+  }
+  /* Runder, blinkender Button */
+.privacy-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Courier New", monospace;
+    font-weight: bold;
+    font-size: 1rem;
+    color: white;
+    text-shadow: 1px 1px 2px black;
+    cursor: pointer;
+    background: radial-gradient(circle at 30% 30%, #ff4d4d, #b30000);
+    width: 160px;
+    height: 160px;
+    margin: 20px auto 0 auto;
+    border-radius: 50%;
+    border: 6px solid #666;
+    box-shadow:
+      inset -4px -4px 10px rgba(0,0,0,0.4),
+      inset 4px 4px 10px rgba(255,255,255,0.2),
+      0 0 20px rgba(255,0,0,0.6),
+      0 0 40px rgba(255,0,0,0.4);
+    outline: none;
+    animation: glow-pulse 1.5s infinite alternate;
+    position: relative;
+  }
+
+  /* Glow Animation */
+  @keyframes glow-pulse {
+    0% {
+      box-shadow:
+        inset -4px -4px 10px rgba(0,0,0,0.4),
+        inset 4px 4px 10px rgba(255,255,255,0.2),
+        0 0 10px rgba(255,0,0,0.4),
+        0 0 20px rgba(255,0,0,0.3);
+    }
+    100% {
+      box-shadow:
+        inset -4px -4px 10px rgba(0,0,0,0.4),
+        inset 4px 4px 10px rgba(255,255,255,0.2),
+        0 0 30px rgba(255,0,0,0.8),
+        0 0 60px rgba(255,0,0,0.6);
+    }
+  }
+
+  /* Optionaler 3D-Effekt mit kleiner Basis */
+  .privacy-btn::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 20px;
+    background: #444;
+    border-radius: 50%;
+    box-shadow: inset 0 4px 6px rgba(0,0,0,0.5);
+  }</style>
+</head>
+<body>
+  <div class="terminal">
+    <div class="alert" id="alertBox">SCAN COMPLETE</div>
+    <h1 class="title" id="typewriter">Überwachungsraum // Datenschutzerklärung</h1>
+    <div class="lights" id="lights">
+      <div class="light"></div>
+      <div class="light"></div>
+      <div class="light"></div>
+    </div>
+    <div class="code" id="codeOutput"></div>
+    <button class="privacy-btn" id="privacyBtn" title="Datenschutzerklärung abspielen">Datenschutz §</button>
+  </div>
+
+<script>
+/* Typewriter für Titel */
+const twElem = document.getElementById('typewriter');
+const twText = twElem.textContent;
+twElem.textContent = '';
+let tIndex = 0;
+function typeWriter() {
+  if (tIndex < twText.length) {
+    twElem.textContent += twText.charAt(tIndex++);
+    setTimeout(typeWriter, 50);
+  }
+}
+typeWriter();
+
+/* Zufällige blinkende Lichter */
+const lights = document.querySelectorAll('.light');
+setInterval(() => {
+  lights.forEach(l => l.className = 'light');
+  const rand = Math.floor(Math.random() * lights.length);
+  lights[rand].classList.add(Math.random() > 0.5 ? 'active-green' : 'active-red');
+}, 150);
+
+/* Datenschutzerklärung-Log */
+const codeOutput = document.getElementById('codeOutput');
+const privacyLines = [
+  "[PRIVACY_POLICY] Wir nehmen den Schutz Ihrer Daten sehr ernst.",
+  "[SECTION] Verantwortlicher: Musterfirma GmbH, Musterstraße 1, 12345 Musterstadt.",
+  "[DATA_COLLECTION] Wir erfassen personenbezogene Daten nur, wenn Sie uns diese mitteilen.",
+  "[PURPOSE] Verwendung der Daten ausschließlich zur Bearbeitung Ihrer Anfrage.",
+  "[STORAGE] Speicherung nur solange erforderlich, Löschung nach Ablauf gesetzlicher Fristen.",
+  "[SECURITY] Daten werden verschlüsselt übertragen (SSL/TLS).",
+  "[RIGHTS] Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung.",
+  "[CONTACT] datenschutz@musterfirma.de für alle Anfragen.",
+  "[LOG] Ende der Datenschutzerklärung."
+];
+let currentTimeouts = [];
+
+function playPrivacyLog() {
+  // Vorherige Animation stoppen
+  currentTimeouts.forEach(clearTimeout);
+  currentTimeouts = [];
+  codeOutput.innerHTML = '';
+  
+  let delay = 0;
+  privacyLines.forEach((line, idx) => {
+    delay += Math.random() * 5000; // zufällig bis zu 5 Sekunden
+    const t = setTimeout(() => {
+      codeOutput.innerHTML += line + "<br>";
+      codeOutput.scrollTop = codeOutput.scrollHeight;
+    }, delay);
+    currentTimeouts.push(t);
+  });
+}
+
+// Button-Click Event
+document.getElementById('privacyBtn').addEventListener('click', playPrivacyLog);
+
+/* Zufällige Alerts */
+const alertBox = document.getElementById('alertBox');
+setInterval(() => {
+  if (Math.random() > 0.7) {
+    alertBox.textContent = Math.random() > 0.5 ? "SCAN COMPLETE" : "INTRUSION DETECTED";
+    alertBox.style.display = 'block';
+    setTimeout(() => alertBox.style.display = 'none', 1500);
+  }
+}, 3000);
+</script>
+</body>
+</html>

@@ -13,6 +13,9 @@ body {
   max-width: 600px;
   margin: 40px auto;
   box-shadow: 4px 4px 0 #888;
+  position: absolute; /* wichtig, damit wir es frei bewegen können */
+  top: 50px; /* Startposition */
+  left: 50px; /* Startposition */
 }
 
 .title-bar {
@@ -20,6 +23,8 @@ body {
   color: white;
   padding: 8px;
   font-weight: bold;
+  cursor: move; /* zeigt an, dass man verschieben kann */
+  user-select: none; /* verhindert Textmarkierung beim Ziehen */
 }
 
 .window-body {

@@ -198,4 +198,50 @@ setInterval(updateCountdown, 1000);
       });
     });
 </script>
+
+<script>
+(function() {
+  const windowEl = document.querySelector('.window');
+  const titleBar = windowEl.querySelector('.title-bar');
+
+  let offsetX = 0, offsetY = 0;
+  let isDragging = false;
+
+  // Fenster beim Laden zentrieren
+  function centerWindow() {
+    const winWidth = windowEl.offsetWidth;
+    const winHeight = windowEl.offsetHeight;
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+
+    const left = (screenWidth - winWidth) / 2;
+    const top = (screenHeight - winHeight) / 2;
+
+    windowEl.style.left = left + 'px';
+    windowEl.style.top = top + 'px';
+  }
+
+  // Beim Laden und auch bei Fenstergröße-Änderung zentrieren (nur beim ersten Mal)
+  window.addEventListener('load', centerWindow);
+
+  titleBar.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    offsetX = e.clientX - windowEl.offsetLeft;
+    offsetY = e.clientY - windowEl.offsetTop;
+    titleBar.style.cursor = 'grabbing';
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    windowEl.style.left = (e.clientX - offsetX) + 'px';
+    windowEl.style.top = (e.clientY - offsetY) + 'px';
+  });
+
+  document.addEventListener('mouseup', () => {
+    isDragging = false;
+    titleBar.style.cursor = 'move';
+  });
+})();
+</script>
+
 </html>
